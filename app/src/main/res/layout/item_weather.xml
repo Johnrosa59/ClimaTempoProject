@@ -29,9 +29,9 @@
                     android:id="@+id/txtLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cidade, Estado, País"
-                    android:textStyle="bold"
-                    android:textSize="18sp" />
+                    android:text="Cidade, Estado"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtDetails"

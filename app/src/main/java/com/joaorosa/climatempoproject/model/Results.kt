@@ -6,6 +6,7 @@ data class Results(
     val cloudiness: Int,
     val condition_code: String,
     val condition_slug: String,
+    val cref: String,
     val currently: String,
     val date: String,
     val description: String,

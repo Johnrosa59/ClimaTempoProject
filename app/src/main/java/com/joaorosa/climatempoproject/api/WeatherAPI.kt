@@ -1,5 +1,6 @@
 package com.joaorosa.climatempoproject.api
 
+import com.joaorosa.climatempoproject.model.Results
 import com.joaorosa.climatempoproject.model.WeatherPlaceResponse
 import retrofit2.Response
 import retrofit2.http.GET

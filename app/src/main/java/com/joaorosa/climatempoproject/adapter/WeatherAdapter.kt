@@ -1,23 +1,27 @@
-/*
 package com.joaorosa.climatempoproject.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joaorosa.climatempoproject.databinding.ItemWeatherBinding
+import com.joaorosa.climatempoproject.model.Forecast
+import com.joaorosa.climatempoproject.model.Results
 import com.joaorosa.climatempoproject.model.WeatherPlaceResponse
 
 class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
-    private var list = mutableListOf<WeatherPlaceResponse>()
+    private var listWeather = emptyList<Forecast>()
 
-    fun updateListWeather(list: MutableList<WeatherPlaceResponse>){
-        this.list = list
+    fun getWeather(novaLista: List<Forecast>){
+        this.listWeather = novaLista
         notifyDataSetChanged()
     }
     inner class WeatherViewHolder(val binding: ItemWeatherBinding) : RecyclerView.ViewHolder(binding.root){
 
-        fun bind(){
-            
+        fun bind(weather: Forecast){
+            binding.tvData.text = weather.date
+            binding.tvWeather.text = weather.description
+            binding.txtMax.text = weather.max.toString() + "ºC"
+            binding.txtMin.text = weather.min.toString() + "ºC"
         }
     }
 
@@ -32,10 +36,12 @@ class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() 
     }
 
     override fun onBindViewHolder(holder: WeatherAdapter.WeatherViewHolder, position: Int) {
-
+        val weather = listWeather[position]
+        holder.bind(weather)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return listWeather.size
+
     }
-}*/
+}

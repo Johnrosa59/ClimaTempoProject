@@ -5,13 +5,16 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-//import com.joaorosa.climatempoproject.adapter.WeatherAdapter
+import com.joaorosa.climatempoproject.adapter.WeatherAdapter
 import com.joaorosa.climatempoproject.api.RetrofitService
 import com.joaorosa.climatempoproject.databinding.ActivityMainBinding
+import com.joaorosa.climatempoproject.model.Results
 import com.joaorosa.climatempoproject.model.WeatherPlaceResponse
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
@@ -24,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         RetrofitService.weatherAPI
     }
 
-    val estadosMap = mapOf(
+    val estados = mapOf(
         "Acre" to "AC",
         "Alagoas" to "AL",
         "Amapá" to "AP",
@@ -54,32 +57,48 @@ class MainActivity : AppCompatActivity() {
         "Tocantins" to "TO"
     )
 
-   // private lateinit var adapter: WeatherAdapter
+   private lateinit var adapter: WeatherAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
 
-        //adapter = WeatherAdapter()
-
-        //adapter.updateListWeather(list)
+        adapter = WeatherAdapter()
 
         binding.rvWeather.layoutManager =
             LinearLayoutManager(this)
+        binding.rvWeather.adapter = adapter
 
 
-        setContentView(binding.root)
+        binding.btnSearch.setOnClickListener {
+            recoveryWeather()
+        }
+
     }
 
     private fun recoveryWeather() {
 
-        CoroutineScope( Dispatchers.IO ).launch {
+        val cityState = binding.editSearch.text.toString()
+        val parts = cityState.split(",")
 
-            val cityState = "Curitiba,PR"
+        val city = parts[0].trim()
+        val state = parts[1].trim()
+
+        val estadoSigla = estados[state]
+
+        val transformedValueCityState = "$city,$estadoSigla"
+
+        println(transformedValueCityState)
+
+
+       CoroutineScope( Dispatchers.IO ).launch {
+
+
             var response: Response<WeatherPlaceResponse>? = null
 
             try {
                 response = weatherAPI.getWeather(
-                    cityState,
+                    transformedValueCityState,
                     RetrofitService.API_KEY
                 )
             }catch (e: Exception){
@@ -88,10 +107,13 @@ class MainActivity : AppCompatActivity() {
 
             if( response != null ){
                 if( response.isSuccessful ){
-                    val result = response.body()
-                    if(result != null){
-                        val results = result.results
-                        Log.i("teste", "recuperar clima: $results")
+                    val responseWeather = response.body()
+                    if(responseWeather != null){
+
+                        withContext( Dispatchers.Main ){
+                            adapter.getWeather(responseWeather.results.forecast)
+                        }
+
                     }
 
                 }else{
@@ -103,11 +125,13 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-    private fun showMessage(mensagem: String ) {
-        Toast.makeText(
-            applicationContext,
-            mensagem,
-            Toast.LENGTH_LONG
-        ).show()
+    private suspend fun showMessage(mensagem: String ) {
+        withContext(Dispatchers.Main) {
+            Toast.makeText(
+                applicationContext,
+                mensagem,
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }

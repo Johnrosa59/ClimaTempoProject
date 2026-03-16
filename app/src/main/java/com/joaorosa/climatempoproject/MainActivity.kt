@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity() {
             recoveryWeather()
         }
 
+
     }
 
     private fun recoveryWeather() {
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity() {
 
                         withContext( Dispatchers.Main ){
                             adapter.getWeather(responseWeather.results.forecast)
+                            adapter.getCity(responseWeather.results.city)
                         }
 
                     }

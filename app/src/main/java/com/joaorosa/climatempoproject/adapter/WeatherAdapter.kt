@@ -4,8 +4,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joaorosa.climatempoproject.databinding.ItemWeatherBinding
 import com.joaorosa.climatempoproject.model.Forecast
-import com.joaorosa.climatempoproject.model.Results
-import com.joaorosa.climatempoproject.model.WeatherPlaceResponse
 
 class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
@@ -15,6 +13,13 @@ class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() 
         this.listWeather = novaLista
         notifyDataSetChanged()
     }
+
+    var cityTaken = ""
+
+    fun getCity(city: String){
+        this.cityTaken = city
+        notifyDataSetChanged()
+    }
     inner class WeatherViewHolder(val binding: ItemWeatherBinding) : RecyclerView.ViewHolder(binding.root){
 
         fun bind(weather: Forecast){
@@ -22,6 +27,7 @@ class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() 
             binding.tvWeather.text = weather.description
             binding.txtMax.text = weather.max.toString() + "ºC"
             binding.txtMin.text = weather.min.toString() + "ºC"
+            binding.txvCity.text = cityTaken
         }
     }
 

@@ -1,16 +1,17 @@
 package com.joaorosa.climatempoproject
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joaorosa.climatempoproject.adapter.WeatherAdapter
 import com.joaorosa.climatempoproject.api.RetrofitService
+import com.joaorosa.climatempoproject.database.WeatherDAO
 import com.joaorosa.climatempoproject.databinding.ActivityMainBinding
-import com.joaorosa.climatempoproject.model.Results
+import com.joaorosa.climatempoproject.model.WeatherCity
+import com.joaorosa.climatempoproject.model.WeatherDays
 import com.joaorosa.climatempoproject.model.WeatherPlaceResponse
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +28,14 @@ class MainActivity : AppCompatActivity() {
         RetrofitService.weatherAPI
     }
 
-    val estados = mapOf(
+    private var adapter: WeatherAdapter? = null
+    private lateinit var dao: WeatherDAO
+
+    // Guarda o nome da cidade atualmente exibida
+    private var currentCityName: String = ""
+
+    // Mapa de estados por extenso -> sigla
+    private val estados = mapOf(
         "Acre" to "AC",
         "Alagoas" to "AL",
         "Amapá" to "AP",
@@ -57,43 +65,91 @@ class MainActivity : AppCompatActivity() {
         "Tocantins" to "TO"
     )
 
-   private lateinit var adapter: WeatherAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        adapter = WeatherAdapter()
+        dao = WeatherDAO(this)
 
-        binding.rvWeather.layoutManager =
-            LinearLayoutManager(this)
+        // Adapter com callbacks de deletar e editar
+        adapter = WeatherAdapter(
+            onDeleteClick = { weatherClicked->
+                deletarWeatherDay(weatherClicked)
+            },
+            onEditClick = { weatherClicked ->
+                abrirTelaEdicao(weatherClicked)
+            }
+        )
+
+        binding.rvWeather.layoutManager = LinearLayoutManager(this)
         binding.rvWeather.adapter = adapter
-
 
         binding.btnSearch.setOnClickListener {
             recoveryWeather()
         }
 
+        // Carregar dados do banco ao abrir o app
+        CoroutineScope(Dispatchers.IO).launch {
+            val cidades = dao.toList()
 
+            if (cidades.isNotEmpty()) {
+                val ultimaCidade = cidades.last()
+                withContext(Dispatchers.Main) {
+                    currentCityName = ultimaCidade.cityName
+                    adapter?.setCity(ultimaCidade.cityName)
+                    adapter?.setWeatherList(ultimaCidade.forecastDays)
+                }
+            }
+        }
     }
 
-    private fun recoveryWeather() {
+    override fun onResume() {
+        super.onResume()
+
+        // Sempre que voltar pra tela principal, recarrega os dados do banco
+        CoroutineScope(Dispatchers.IO).launch {
+            val cidades = dao.toList()
+
+            if (cidades.isNotEmpty()) {
+                val ultimaCidade = cidades.last()
+                withContext(Dispatchers.Main) {
+                    currentCityName = ultimaCidade.cityName
+                    adapter?.setCity(ultimaCidade.cityName)
+                    adapter?.setWeatherList(ultimaCidade.forecastDays)
+                }
+            }
+        }
+    }
+
+    fun recoveryWeather() {
 
         val cityState = binding.editSearch.text.toString()
+
+        // Espera formato: "Cidade, Estado"
         val parts = cityState.split(",")
+
+        if (parts.size < 2) {
+            CoroutineScope(Dispatchers.Main).launch {
+                showMessage("Digite no formato: Cidade, Estado (ex: São Paulo, SP)")
+            }
+            return
+        }
 
         val city = parts[0].trim()
         val state = parts[1].trim()
 
         val estadoSigla = estados[state]
 
+        if (estadoSigla == null) {
+            CoroutineScope(Dispatchers.Main).launch {
+                showMessage("Estado inválido.")
+            }
+            return
+        }
+
         val transformedValueCityState = "$city,$estadoSigla"
 
-        println(transformedValueCityState)
-
-
-       CoroutineScope( Dispatchers.IO ).launch {
-
+        CoroutineScope(Dispatchers.IO).launch {
 
             var response: Response<WeatherPlaceResponse>? = null
 
@@ -102,32 +158,95 @@ class MainActivity : AppCompatActivity() {
                     transformedValueCityState,
                     RetrofitService.API_KEY
                 )
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 showMessage("Erro ao fazer a requisição")
             }
 
-            if( response != null ){
-                if( response.isSuccessful ){
+            if (response != null) {
+                if (response.isSuccessful) {
                     val responseWeather = response.body()
-                    if(responseWeather != null){
+                    if (responseWeather != null) {
 
-                        withContext( Dispatchers.Main ){
-                            adapter.getWeather(responseWeather.results.forecast)
-                            adapter.getCity(responseWeather.results.city)
+                        // 1) Salvar cidade
+                        val idCidade = dao.saveCity(
+                            WeatherCity(
+                                id = -1,
+                                cityName = responseWeather.results.city,
+                                forecastDays = mutableListOf()
+                            )
+                        )
+
+                        if (idCidade == -1L) {
+                            showMessage("Erro ao salvar cidade no banco.")
+                            return@launch
                         }
 
+                        // 2) Salvar previsões
+                        responseWeather.results.forecast.forEach { forecast ->
+                            dao.saveWeather(
+                                WeatherDays(
+                                    0,// autoincrement
+                                    idCidade.toInt(),
+                                    forecast.date,
+                                    forecast.description,
+                                    forecast.max.toString(),
+                                    forecast.min.toString()
+                                )
+                            )
+                        }
+
+                        // 3) Buscar tudo do banco e atualizar a lista
+                        val cidadesComPrevisao = dao.toList()
+
+                        withContext(Dispatchers.Main) {
+                            if (cidadesComPrevisao.isNotEmpty()) {
+
+                                val ultimaCidade = cidadesComPrevisao.last()
+                                currentCityName = ultimaCidade.cityName
+                                adapter?.setCity(ultimaCidade.cityName)
+                                adapter?.setWeatherList(ultimaCidade.forecastDays)
+
+                            } else {
+                                showMessage("Nenhum dado encontrado no banco.")
+                            }
+                        }
+
+                    } else {
+                        showMessage("Não foi possível recuperar o clima. CÓDIGO: ${response.code()}")
                     }
-
-                }else{
-                    showMessage("Não foi possível recuperar o clima recente CODIGO: ${response.code()}")
+                } else {
+                    showMessage("Não foi possível fazer a requisição")
                 }
-            }else{
-                showMessage("Não foi possível fazer a requisição")
             }
-
         }
     }
-    private suspend fun showMessage(mensagem: String ) {
+
+    private fun deletarWeatherDay(weather: WeatherDays) {
+        val id = weather.id
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val apagou = dao.deleteWeatherDay(id)
+
+            withContext(Dispatchers.Main) {
+                if (apagou) {
+                    adapter?.removeItem(weather)
+                    showMessage("Item removido com sucesso.")
+                } else {
+                    showMessage("Erro ao remover item.")
+                }
+            }
+        }
+    }
+
+    private fun abrirTelaEdicao(weather: WeatherDays) {
+        val intent = Intent(this, ChangeItemActivity::class.java).apply {
+            putExtra("CITY_ID", weather.cityId)
+            putExtra("CURRENT_CITY_NAME", currentCityName)
+        }
+        startActivity(intent)
+    }
+
+    private suspend fun showMessage(mensagem: String) {
         withContext(Dispatchers.Main) {
             Toast.makeText(
                 applicationContext,

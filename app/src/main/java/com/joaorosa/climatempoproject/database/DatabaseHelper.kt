@@ -10,38 +10,53 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
 ) {
 
     companion object {
-        const val DATABASE_NAME = "WeatherDatabase.db"
+        const val DATABASE_NAME = "Clima.db"
         const val DATABASE_VERSION = 1
-        const val TABLE_NAME = "weatherSaved"
-        const val COLUMN_ID = "id_weather"
-        const val COLUMN_CITY = "city"
-        const val COLUMN_DATE = "data_weather"
-        const val COLUMN_DESCRIPTION = "description"
-        const val COLUMN_MAX = "maximum"
-        const val COLUMN_MIN = "minimum"
 
+        const val TABLE_NAME_WEATHER_CITY = "Clima_Cidade"
+        const val TABLE_NAME_WEATHER_TWO_DAYS = "Clima_Dois_Dias"
 
+        const val COLUMN_ID_CITY = "Id_Cidade"
+        const val COLUMN_ID_CITY_TWO_DAYS = "Id_Cidade"
 
+        const val COLUMN_CITY = "Nome_Cidade"
+        const val COLUMN_DATE = "Data_Clima"
+        const val COLUMN_DESCRIPTION = "Descricao"
+
+        const val COLUMN_MAX = "Maxima"
+        const val COLUMN_MIN = "Minima"
+        const val COLUMN_ID = "Id"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val sql = "CREATE TABLE IF NOT EXISTS $TABLE_NAME(" +
-                  "$COLUMN_ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                  "$COLUMN_CITY VARCHAR(60)," +
-                  "$COLUMN_DATE TEXT," +
-                  "$COLUMN_DESCRIPTION VARCHAR(60)," +
-                  "$COLUMN_MIN VARCHAR(20)," +
-                  "$COLUMN_MAX VARCHAR(20)" +
-                  ");"
+        val weatherCity = """
+            CREATE TABLE IF NOT EXISTS $TABLE_NAME_WEATHER_CITY (
+                $COLUMN_ID_CITY INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_CITY TEXT NOT NULL
+            );
+        """.trimIndent()
 
+        val weatherTwoDays = """
+            CREATE TABLE IF NOT EXISTS  $TABLE_NAME_WEATHER_TWO_DAYS (
+                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COLUMN_ID_CITY_TWO_DAYS INTEGER,
+                $COLUMN_DATE TEXT NOT NULL,
+                $COLUMN_DESCRIPTION TEXT,
+                $COLUMN_MAX TEXT,
+                $COLUMN_MIN TEXT,
+                FOREIGN KEY ($COLUMN_ID_CITY_TWO_DAYS) 
+                    REFERENCES $TABLE_NAME_WEATHER_CITY($COLUMN_ID_CITY)
+                    ON DELETE CASCADE
+            );
+        """.trimIndent()
 
         try {
-
-        }catch (e: Exception){
-            db?.execSQL(sql)
-            Log.i("info_db","Sucesso ao criar a tabela")
+            db?.execSQL(weatherCity)
+            db?.execSQL(weatherTwoDays)
+            Log.i("info_db", "Sucesso ao criar as tabelas")
+        } catch (e: Exception) {
+            Log.i("info_db", "Erro ao criar as tabelas ${e.message}")
         }
-
     }
 
     override fun onUpgrade(
@@ -49,8 +64,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         oldVersion: Int,
         newVersion: Int
     ) {
-        TODO("Not yet implemented")
+        // Deixar vazio por enquanto
     }
 
+    override fun onConfigure(db: SQLiteDatabase) {
+        super.onConfigure(db)
+        db.setForeignKeyConstraintsEnabled(true)
+    }
 }
-

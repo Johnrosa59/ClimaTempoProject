@@ -64,7 +64,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(
         oldVersion: Int,
         newVersion: Int
     ) {
-        // Deixar vazio por enquanto
     }
 
     override fun onConfigure(db: SQLiteDatabase) {

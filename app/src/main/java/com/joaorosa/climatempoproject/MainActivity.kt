@@ -31,10 +31,8 @@ class MainActivity : AppCompatActivity() {
     private var adapter: WeatherAdapter? = null
     private lateinit var dao: WeatherDAO
 
-    // Guarda o nome da cidade atualmente exibida
     private var currentCityName: String = ""
 
-    // Mapa de estados por extenso -> sigla
     private val estados = mapOf(
         "Acre" to "AC",
         "Alagoas" to "AL",
@@ -74,10 +72,10 @@ class MainActivity : AppCompatActivity() {
         // Adapter com callbacks de deletar e editar
         adapter = WeatherAdapter(
             onDeleteClick = { weatherClicked->
-                deletarWeatherDay(weatherClicked)
+                deleteWeatherDay(weatherClicked)
             },
             onEditClick = { weatherClicked ->
-                abrirTelaEdicao(weatherClicked)
+                openEditScreen(weatherClicked)
             }
         )
 
@@ -106,7 +104,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // Sempre que voltar pra tela principal, recarrega os dados do banco
         CoroutineScope(Dispatchers.IO).launch {
             val cidades = dao.toList()
 
@@ -181,7 +178,6 @@ class MainActivity : AppCompatActivity() {
                             return@launch
                         }
 
-                        // 2) Salvar previsões
                         responseWeather.results.forecast.forEach { forecast ->
                             dao.saveWeather(
                                 WeatherDays(
@@ -195,7 +191,6 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        // 3) Buscar tudo do banco e atualizar a lista
                         val cidadesComPrevisao = dao.toList()
 
                         withContext(Dispatchers.Main) {
@@ -221,7 +216,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun deletarWeatherDay(weather: WeatherDays) {
+    private fun deleteWeatherDay(weather: WeatherDays) {
         val id = weather.id
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -238,10 +233,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun abrirTelaEdicao(weather: WeatherDays) {
+    private fun openEditScreen(weather: WeatherDays) {
         val intent = Intent(this, ChangeItemActivity::class.java).apply {
-            putExtra("CITY_ID", weather.cityId)
-            putExtra("CURRENT_CITY_NAME", currentCityName)
         }
         startActivity(intent)
     }

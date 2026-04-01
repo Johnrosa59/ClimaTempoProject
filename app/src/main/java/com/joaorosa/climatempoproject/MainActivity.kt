@@ -234,8 +234,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openEditScreen(weather: WeatherDays) {
-        val intent = Intent(this, ChangeItemActivity::class.java).apply {
-        }
+        val intent = Intent(this, ChangeItemActivity::class.java)
         startActivity(intent)
     }
 

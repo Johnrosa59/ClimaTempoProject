@@ -71,7 +71,7 @@ class ChangeItemActivity : AppCompatActivity() {
 
             if (texto.isBlank()) {
                 Toast.makeText(this, "Digite Cidade, Estado", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+
             }
 
             changeCityWithAPI(texto)
@@ -93,6 +93,7 @@ class ChangeItemActivity : AppCompatActivity() {
         val state = parts[1].trim()
 
         val stateAcronym = this@ChangeItemActivity.state[state]
+        println(stateAcronym)
         if (stateAcronym == null) {
             Toast.makeText(this, "Estado inválido.", Toast.LENGTH_SHORT).show()
             return

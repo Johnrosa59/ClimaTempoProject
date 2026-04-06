@@ -5,6 +5,149 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
+    android:orientation="horizontal"
     tools:context=".RegisterActivity">
+
+    <ImageButton
+        android:id="@+id/btnVoltar"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Voltar"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@android:color/white" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="350dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="168dp"
+        android:background="@drawable/bg_edittext"
+        android:ems="10"
+        android:hint="Nome"
+        android:inputType="text|textEmailAddress"
+        android:paddingLeft="20dp"
+        android:textColor="#050505"
+        android:textColorHint="#090909"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextAddress"
+        android:layout_width="350dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_edittext"
+        android:ems="10"
+        android:hint="Endereço"
+        android:inputType="text|textEmailAddress"
+        android:paddingLeft="20dp"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextName" />
+
+    <EditText
+        android:id="@+id/editTextEmailRegister"
+        android:layout_width="350dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_edittext"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="text|textEmailAddress"
+        android:paddingLeft="20dp"
+        android:textColor="#050505"
+        android:textColorHint="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextAddress" />
+
+    <EditText
+        android:id="@+id/editTextPasswordRegister"
+        android:layout_width="350dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="88dp"
+        android:background="@drawable/bg_edittext"
+        android:ems="10"
+        android:hint="Senha"
+        android:inputType="text|textEmailAddress"
+        android:paddingLeft="20dp"
+        android:textColor="#050505"
+        android:textColorHint="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextAddress" />
+
+    <EditText
+        android:id="@+id/editTextPasswordConfirm"
+        android:layout_width="350dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_edittext"
+        android:ems="10"
+        android:hint="Confirmar Senha"
+        android:inputType="text|textEmailAddress"
+        android:paddingLeft="20dp"
+        android:textColor="#050505"
+        android:textColorHint="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister" />
+
+    <Button
+        android:id="@+id/btnSendCadastre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Enviar Cadastro"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupSex" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupSex"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:background="@drawable/rounded_corners"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPasswordRegister">
+
+        <RadioButton
+            android:id="@+id/radioBtnMale"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:text="Masculino"
+            android:textColor="#020202"
+            android:textColorHint="#040404" />
+
+        <RadioButton
+            android:id="@+id/radioBtnFemale"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:text="Feminino"
+            android:textColor="#000000"
+            android:textColorHint="#000000" />
+    </RadioGroup>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

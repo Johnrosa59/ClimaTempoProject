@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.joaorosa.climatempoproject.adapter.WeatherAdapter
 import com.joaorosa.climatempoproject.api.RetrofitService
 import com.joaorosa.climatempoproject.database.WeatherDAO
@@ -33,7 +34,11 @@ class MainActivity : AppCompatActivity() {
 
     private var currentCityName: String = ""
 
-    private val estados = mapOf(
+    private val auth by lazy {
+        FirebaseAuth.getInstance()
+    }
+
+    private val states = mapOf(
         "Acre" to "AC",
         "Alagoas" to "AL",
         "Amapá" to "AP",
@@ -68,6 +73,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         dao = WeatherDAO(this)
+
+
+        binding.btnLogout.setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(this, LoginScreen::class.java))
+            finish()
+        }
 
         // Adapter com callbacks de deletar e editar
         adapter = WeatherAdapter(
@@ -105,10 +117,10 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
 
         CoroutineScope(Dispatchers.IO).launch {
-            val cidades = dao.toList()
+            val citys = dao.toList()
 
-            if (cidades.isNotEmpty()) {
-                val ultimaCidade = cidades.last()
+            if (citys.isNotEmpty()) {
+                val ultimaCidade = citys.last()
                 withContext(Dispatchers.Main) {
                     currentCityName = ultimaCidade.cityName
                     adapter?.setCity(ultimaCidade.cityName)
@@ -135,7 +147,7 @@ class MainActivity : AppCompatActivity() {
         val city = parts[0].trim()
         val state = parts[1].trim()
 
-        val estadoSigla = estados[state]
+        val estadoSigla = states[state]
 
         if (estadoSigla == null) {
             CoroutineScope(Dispatchers.Main).launch {
@@ -164,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                     val responseWeather = response.body()
                     if (responseWeather != null) {
 
-                        // 1) Salvar cidade
+
                         val idCidade = dao.saveCity(
                             WeatherCity(
                                 id = -1,
@@ -191,12 +203,12 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        val cidadesComPrevisao = dao.toList()
+                        val cityWithWeather = dao.toList()
 
                         withContext(Dispatchers.Main) {
-                            if (cidadesComPrevisao.isNotEmpty()) {
+                            if (cityWithWeather.isNotEmpty()) {
 
-                                val ultimaCidade = cidadesComPrevisao.last()
+                                val ultimaCidade = cityWithWeather.last()
                                 currentCityName = ultimaCidade.cityName
                                 adapter?.setCity(ultimaCidade.cityName)
                                 adapter?.setWeatherList(ultimaCidade.forecastDays)
@@ -238,11 +250,11 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private suspend fun showMessage(mensagem: String) {
+    private suspend fun showMessage(message: String) {
         withContext(Dispatchers.Main) {
             Toast.makeText(
                 applicationContext,
-                mensagem,
+                message,
                 Toast.LENGTH_LONG
             ).show()
         }

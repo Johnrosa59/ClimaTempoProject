@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="10/03/2026"
+        android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/btnDelete"
@@ -30,6 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Nublado"
+        android:textColor="#000000"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDate" />
 
@@ -39,7 +42,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Max:"
+        android:textColor="#000000"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvWeather"
@@ -51,7 +56,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="Min:"
+        android:textColor="#000000"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/txtMax" />
 
@@ -61,7 +68,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="22°C"
+        android:textColor="#000000"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tvTemp"
         app:layout_constraintStart_toEndOf="@+id/tvTemp"
         app:layout_constraintTop_toTopOf="@+id/tvTemp" />
@@ -72,7 +81,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="22°C"
+        android:textColor="#0B0B0B"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tvTemp3"
         app:layout_constraintStart_toEndOf="@+id/tvTemp3"
         app:layout_constraintTop_toTopOf="@+id/tvTemp3" />
@@ -93,6 +104,7 @@
         android:id="@+id/btnEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/transparent"
         app:layout_constraintEnd_toStartOf="@+id/btnDelete"
         app:layout_constraintTop_toTopOf="@+id/btnDelete"
         app:srcCompat="@drawable/ic_editar_24" />
@@ -103,6 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Cidade"
+        android:textColor="#000000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"

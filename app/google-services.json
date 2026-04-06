@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1043573431846",
+    "project_id": "projetoclimatempo-21a02",
+    "storage_bucket": "projetoclimatempo-21a02.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043573431846:android:3b85d08b0ac8b074f390e7",
+        "android_client_info": {
+          "package_name": "com.joaorosa.climatempoproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIUIqO0EGCzuaOrlRE_nXRrV9nXMhJfAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

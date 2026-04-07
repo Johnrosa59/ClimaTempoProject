@@ -6,8 +6,10 @@
 
 
 
-https://github.com/user-attachments/assets/fdd8fce7-08e9-4846-abb3-fa59fceeb6e8
+https://github.com/user-attachments/assets/9a749be1-9cd7-4418-a86f-051aadb3cded
 
+
+<hr>
 
 <i>Imagem do projeto</i>
 <img width="1918" height="1078" alt="image" src="https://github.com/user-attachments/assets/a1487d00-331a-4c70-a72c-5fb20e96410e" />
